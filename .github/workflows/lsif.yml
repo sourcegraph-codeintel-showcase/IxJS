@@ -1,0 +1,17 @@
+name: Index and upload LSIF data to sourcegraph.com
+on:
+  push:
+    branches:
+      - master
+jobs:
+  index-and-upload:
+    runs-on: ubuntu-latest
+    container: sourcegraph/lsif-node@sha256:943e620468baa9c1ad01a469e4ada02221105c6c4172542c8136965e482db791
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: npm install
+      - name: Generate LSIF data
+        run: lsif-tsc -p .
+      - name: Upload LSIF data
+        run: src lsif upload -no-progress -github-token=${{ secrets.GITHUB_TOKEN }}
